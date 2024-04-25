@@ -123,7 +123,28 @@ class App {
     if (e.target.dataset.type === 'del') removeAll.forEach(el => el.remove());
   }
 
-  _editWorkout(e) {}
+  _editWorkout(e) {
+    const btn = e.target;
+
+    // To edit specific workout
+    if (btn.dataset.type === 'edit') {
+    }
+
+    // To delete specific workout
+    if (btn.dataset.type === 'del') {
+      const index = this.#workouts.findIndex(
+        work => work.id === btn.closest('.workout').dataset.id
+      );
+
+      // Guard clause
+      if (!this.#workouts[index]) return;
+
+      this.#workouts.splice(index, 1);
+
+      this._setLocalStorage();
+      location.reload();
+    }
+  }
 
   _displayBtns(e) {
     e.preventDefault();
