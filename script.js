@@ -17,7 +17,7 @@ class Workout {
 
     this.description = `${this.type[0].toUpperCase() + this.type.slice(1)} on ${
       months[this.date.getMonth()]
-    } ${this.date.getDate()}, at ${this.date.getHours()}:${this.date.getMinutes()} hrs`;
+    } ${this.date.getDate()}`;
   }
 
   click() {
@@ -66,6 +66,7 @@ const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
+const btnEdit = document.querySelector('.btn_edit');
 
 class App {
   #map;
@@ -84,6 +85,65 @@ class App {
     form.addEventListener('submit', this._newWorkout.bind(this));
     inputType.addEventListener('change', this._toggleElevationField);
     containerWorkouts.addEventListener('click', this._moveToPopup.bind(this));
+
+    // Challenges
+    containerWorkouts.addEventListener(
+      'mouseover',
+      this._displayBtns.bind(this)
+    );
+    containerWorkouts.addEventListener('mouseout', this._hideBtns);
+  }
+
+  _showMessage(e) {
+    if (e.target.dataset.type) {
+      const type = e.target.dataset.type;
+
+      const divEl = document.createElement('div');
+      const signal = document.createElement('span');
+      divEl.className = 'divMessage';
+
+      if (type === 'edit') {
+        signal.textContent = 'edit';
+        divEl.classList.add('divEdit');
+      }
+      if (type === 'del') {
+        signal.textContent = 'delete';
+        divEl.classList.add('divDel');
+      }
+      divEl.prepend(signal);
+      e.target.append(divEl);
+    }
+  }
+
+  _hideMessage(e) {
+    const removeAll = e.target
+      .closest('.container_btns')
+      .querySelectorAll('.divMessage');
+    if (e.target.dataset.type === 'edit') removeAll.forEach(el => el.remove());
+    if (e.target.dataset.type === 'del') removeAll.forEach(el => el.remove());
+  }
+
+  _editWorkout(e) {}
+
+  _displayBtns(e) {
+    e.preventDefault();
+    const workout = e.target.closest('.workout');
+
+    if (!workout) return;
+
+    const containerBtns = workout.querySelector('.container_btns');
+    containerBtns.classList.toggle('hidden');
+
+    containerBtns.addEventListener('click', this._editWorkout.bind(this));
+    containerBtns.addEventListener('mouseover', this._showMessage);
+    containerBtns.addEventListener('mouseout', this._hideMessage);
+  }
+
+  _hideBtns(e) {
+    e.preventDefault();
+    const workout = e.target.closest('.workout');
+    if (!workout) return;
+    workout.querySelector('.container_btns').classList.toggle('hidden');
   }
 
   _getPosition() {
@@ -213,6 +273,12 @@ class App {
     let html = `
     <li class="workout workout--${workout.type}" data-id="${workout.id}">
       <h2 class="workout__title">${workout.description}</h2>
+      
+      <div class='container_btns hidden'>
+        <button class='btn_edit' data-type='edit'>📝</button>
+        <button class='btn_delete' data-type='del'>❌</button>
+      </div>
+
       <div class="workout__details">
         <span class="workout__icon">${
           workout.type === 'running' ? '🏃‍♂️' : '🚴‍♀️'
@@ -220,6 +286,7 @@ class App {
         <span class="workout__value">${workout.distance}</span>
         <span class="workout__unit">km</span>
       </div>
+
       <div class="workout__details">
         <span class="workout__icon">⏱</span>
         <span class="workout__value">${workout.duration}</span>

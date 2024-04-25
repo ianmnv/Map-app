@@ -72,6 +72,7 @@ a:visited {
   padding: 1.5rem 2.25rem;
   margin-bottom: 1.75rem;
   cursor: pointer;
+  /* position: relative; */
 
   display: grid;
   grid-template-columns: 1fr 1fr 1fr 1fr;
@@ -87,7 +88,7 @@ a:visited {
 .workout__title {
   font-size: 1.7rem;
   font-weight: 600;
-  grid-column: 1 / -1;
+  grid-column: 1 / 4;
 }
 
 .workout__details {
@@ -221,4 +222,42 @@ a:visited {
 }
 .cycling-popup .leaflet-popup-content-wrapper {
   border-left: 5px solid var(--color-brand--1);
+}
+
+.container_btns {
+  grid-column: 4 / 5;
+}
+
+.container_btns button {
+  height: 2.5rem;
+  width: 2.5rem;
+  background-color: #fff;
+  border: none;
+  cursor: cell;
+  position: relative;
+}
+
+.btn_delete {
+  margin-left: 0.8rem;
+}
+
+.hidden {
+  opacity: 0;
+}
+
+.divMessage {
+  font-size: 1.8rem;
+  position: absolute;
+  top: 3%;
+  padding: 1px 4px;
+}
+
+.divEdit {
+  left: -170%;
+  background-color: #c3f1ff;
+}
+
+.divDel {
+  right: 120%;
+  background-color: #ffbcbc;
 }
