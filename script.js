@@ -73,6 +73,7 @@ class App {
   #mapZoom = 14;
   #mapEvent;
   #workouts = [];
+  dontChange = false;
 
   constructor() {
     // Get position
@@ -92,79 +93,6 @@ class App {
       this._displayBtns.bind(this)
     );
     containerWorkouts.addEventListener('mouseout', this._hideBtns);
-  }
-
-  _showMessage(e) {
-    if (e.target.dataset.type) {
-      const type = e.target.dataset.type;
-
-      const divEl = document.createElement('div');
-      const signal = document.createElement('span');
-      divEl.className = 'divMessage';
-
-      if (type === 'edit') {
-        signal.textContent = 'edit';
-        divEl.classList.add('divEdit');
-      }
-      if (type === 'del') {
-        signal.textContent = 'delete';
-        divEl.classList.add('divDel');
-      }
-      divEl.prepend(signal);
-      e.target.append(divEl);
-    }
-  }
-
-  _hideMessage(e) {
-    const removeAll = e.target
-      .closest('.container_btns')
-      .querySelectorAll('.divMessage');
-    if (e.target.dataset.type === 'edit') removeAll.forEach(el => el.remove());
-    if (e.target.dataset.type === 'del') removeAll.forEach(el => el.remove());
-  }
-
-  _editWorkout(e) {
-    const btn = e.target;
-
-    // To edit specific workout
-    if (btn.dataset.type === 'edit') {
-    }
-
-    // To delete specific workout
-    if (btn.dataset.type === 'del') {
-      const index = this.#workouts.findIndex(
-        work => work.id === btn.closest('.workout').dataset.id
-      );
-
-      // Guard clause
-      if (!this.#workouts[index]) return;
-
-      this.#workouts.splice(index, 1);
-
-      this._setLocalStorage();
-      location.reload();
-    }
-  }
-
-  _displayBtns(e) {
-    e.preventDefault();
-    const workout = e.target.closest('.workout');
-
-    if (!workout) return;
-
-    const containerBtns = workout.querySelector('.container_btns');
-    containerBtns.classList.toggle('hidden');
-
-    containerBtns.addEventListener('click', this._editWorkout.bind(this));
-    containerBtns.addEventListener('mouseover', this._showMessage);
-    containerBtns.addEventListener('mouseout', this._hideMessage);
-  }
-
-  _hideBtns(e) {
-    e.preventDefault();
-    const workout = e.target.closest('.workout');
-    if (!workout) return;
-    workout.querySelector('.container_btns').classList.toggle('hidden');
   }
 
   _getPosition() {
@@ -400,6 +328,112 @@ class App {
   reset() {
     localStorage.removeItem('workouts');
     location.reload();
+  }
+
+  _displayBtns(e) {
+    e.preventDefault();
+    const workout = e.target.closest('.workout');
+
+    if (!workout) return;
+
+    const containerBtns = workout.querySelector('.container_btns');
+    containerBtns.classList.toggle('hidden');
+
+    containerBtns.addEventListener('click', this._editWorkout.bind(this));
+    containerBtns.addEventListener('mouseover', this._showMessage);
+    containerBtns.addEventListener('mouseout', this._hideMessage);
+  }
+
+  _hideBtns(e) {
+    e.preventDefault();
+    const workout = e.target.closest('.workout');
+    if (!workout) return;
+    workout.querySelector('.container_btns').classList.toggle('hidden');
+  }
+
+  _showMessage(e) {
+    if (e.target.dataset.type) {
+      const type = e.target.dataset.type;
+
+      const divEl = document.createElement('div');
+      const signal = document.createElement('span');
+      divEl.className = 'divMessage';
+
+      if (type === 'edit') {
+        signal.textContent = 'edit';
+        divEl.classList.add('divEdit');
+      }
+      if (type === 'del') {
+        signal.textContent = 'delete';
+        divEl.classList.add('divDel');
+      }
+      divEl.prepend(signal);
+      e.target.append(divEl);
+    }
+  }
+
+  _hideMessage(e) {
+    const removeAll = e.target
+      .closest('.container_btns')
+      .querySelectorAll('.divMessage');
+    if (e.target.dataset.type === 'edit') removeAll.forEach(el => el.remove());
+    if (e.target.dataset.type === 'del') removeAll.forEach(el => el.remove());
+  }
+
+  _editWorkout(e) {
+    const btn = e.target;
+
+    const index = this.#workouts.findIndex(
+      work => work.id === btn.closest('.workout').dataset.id
+    );
+    // Guard clause
+    if (!this.#workouts[index]) return;
+
+    // To edit specific workout
+    if (btn.dataset.type === 'edit') {
+      if (!this.dontChange) {
+        this.dontChange = true;
+        const work = this.#workouts[index];
+
+        // Every workout: distance & duration
+        const distance = Number(
+          prompt(`Set new distance, right now is ${work.distance} km`)
+        );
+        const duration = Number(
+          prompt(`Set new duration, right now is ${work.duration} min`)
+        );
+
+        work.distance = distance;
+        work.duration = duration;
+
+        // In running: cadence
+        if (work.type === 'running') {
+          const cadence = Number(
+            prompt(`Set new cadence, right now is ${work.cadence} spm`)
+          );
+          work.cadence = cadence;
+        }
+        // In cycling: elevationGain
+        if (work.type === 'cycling') {
+          const elevation = Number(
+            prompt(
+              `Set new elevation gain, right now is ${work.elevationGain} m`
+            )
+          );
+          work.elevationGain = elevation;
+        }
+
+        this._setLocalStorage();
+        location.reload();
+      }
+    }
+
+    // To delete specific workout
+    if (btn.dataset.type === 'del') {
+      this.#workouts.splice(index, 1);
+      this._setLocalStorage();
+      location.reload();
+    }
   }
 }
 
