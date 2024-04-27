@@ -66,6 +66,8 @@ const inputDistance = document.querySelector('.form__input--distance');
 const inputDuration = document.querySelector('.form__input--duration');
 const inputCadence = document.querySelector('.form__input--cadence');
 const inputElevation = document.querySelector('.form__input--elevation');
+
+// Challenges
 const btnEdit = document.querySelector('.btn_edit');
 
 class App {
@@ -93,6 +95,8 @@ class App {
       this._displayBtns.bind(this)
     );
     containerWorkouts.addEventListener('mouseout', this._hideBtns);
+
+    this.createDelAll();
   }
 
   _getPosition() {
@@ -330,6 +334,7 @@ class App {
     location.reload();
   }
 
+  // Challenges
   _displayBtns(e) {
     e.preventDefault();
     const workout = e.target.closest('.workout');
@@ -394,6 +399,7 @@ class App {
       if (!this.dontChange) {
         this.dontChange = true;
         const work = this.#workouts[index];
+        console.log(work);
 
         // Every workout: distance & duration
         const distance = Number(
@@ -412,6 +418,7 @@ class App {
             prompt(`Set new cadence, right now is ${work.cadence} spm`)
           );
           work.cadence = cadence;
+          // work.calcPace();
         }
         // In cycling: elevationGain
         if (work.type === 'cycling') {
@@ -421,6 +428,7 @@ class App {
             )
           );
           work.elevationGain = elevation;
+          // work.calcSpeed();
         }
 
         this._setLocalStorage();
@@ -434,6 +442,17 @@ class App {
       this._setLocalStorage();
       location.reload();
     }
+  }
+
+  createDelAll() {
+    const btn = document.createElement('button');
+    btn.textContent = 'Delete all workouts';
+    btn.classList.add('delAll');
+    const sidebar = document.querySelector('.sidebar');
+    sidebar.append(btn);
+
+    const delAll = document.querySelector('.delAll');
+    delAll.addEventListener('click', this.reset);
   }
 }
 
