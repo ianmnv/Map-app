@@ -96,7 +96,7 @@ class App {
     );
     containerWorkouts.addEventListener('mouseout', this._hideBtns);
 
-    this.createDelAll();
+    this.createBtns();
   }
 
   _getPosition() {
@@ -310,7 +310,7 @@ class App {
       duration: 1,
     });
 
-    // workout.click();
+    workout.click();
   }
 
   _setLocalStorage() {
@@ -452,15 +452,63 @@ class App {
     }
   }
 
-  createDelAll() {
+  createBtns() {
+    // Delete all workouts button
     const btn = document.createElement('button');
     btn.textContent = 'Delete all workouts';
     btn.classList.add('delAll');
     const sidebar = document.querySelector('.sidebar');
     sidebar.append(btn);
-
     const delAll = document.querySelector('.delAll');
     delAll.addEventListener('click', this.reset);
+
+    // Parent element of container buttons
+    const imgEl = document.querySelector('.logo');
+    // Parent element of buttons
+    const btnContainer = document.createElement('div');
+    btnContainer.classList.add('div_container');
+
+    // Sort workouts by option
+    const span = document.createElement('span');
+    span.classList.add('sort_title');
+    span.textContent = 'Sort by:';
+
+    const sortBtn = document.createElement('select');
+    sortBtn.classList.add('form__input', 'sort_select');
+    // Sort by date, type, duration, distance; running: cadence, pace; cycling: elevation or speed
+    const options = [
+      { text: 'date', value: 'date' },
+      { text: 'type', value: 'type' },
+      { text: 'duration', value: 'duration' },
+      { text: 'distance', value: 'distance' },
+      { text: 'cadence', value: 'cadence' },
+      { text: 'pace', value: 'pace' },
+      { text: 'elevation', value: 'elevation' },
+      { text: 'speed', value: 'speed' },
+    ];
+
+    options.forEach(opt => {
+      const option = document.createElement('option');
+      option.textContent = opt.text;
+      option.value = opt.value;
+
+      sortBtn.append(option);
+    });
+    const sortSelect = document.querySelector('.sort_select');
+
+    // Show all workouts on the map
+    const showAll = document.createElement('button');
+    showAll.classList.add('show_btn');
+    showAll.textContent = 'Show all Workouts';
+    const showBtn = document.querySelector('.show_btn');
+
+    btnContainer.append(span, sortBtn, showAll);
+    imgEl.after(btnContainer);
+
+    // Event handlers
+    btnContainer.addEventListener('click', function (e) {
+      console.log(e.target);
+    });
   }
 }
 
