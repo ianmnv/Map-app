@@ -322,7 +322,16 @@ class App {
 
     if (!data) return;
 
-    this.#workouts = data;
+    // this.#workouts = data;
+
+    this.#workouts = data.map(work => {
+      let obj;
+      if (work.type === 'running') obj = new Running();
+      if (work.type === 'cycling') obj = new Cycling();
+
+      Object.assign(obj, work);
+      return obj;
+    });
 
     this.#workouts.forEach(work => {
       this._renderWorkout(work);
@@ -399,7 +408,6 @@ class App {
       if (!this.dontChange) {
         this.dontChange = true;
         const work = this.#workouts[index];
-        console.log(work);
 
         // Every workout: distance & duration
         const distance = Number(
@@ -418,7 +426,7 @@ class App {
             prompt(`Set new cadence, right now is ${work.cadence} spm`)
           );
           work.cadence = cadence;
-          // work.calcPace();
+          work.calcPace();
         }
         // In cycling: elevationGain
         if (work.type === 'cycling') {
@@ -428,7 +436,7 @@ class App {
             )
           );
           work.elevationGain = elevation;
-          // work.calcSpeed();
+          work.calcSpeed();
         }
 
         this._setLocalStorage();
