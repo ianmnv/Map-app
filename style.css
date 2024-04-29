@@ -268,12 +268,17 @@ a:visited {
   font-family: inherit;
   font-weight: 600;
   font-size: 1.8rem;
+
   padding: 2rem;
+  margin-top: 2rem;
+
   border: none;
   border-left: solid 6px #ff6b6b;
   border-radius: 5px;
+
   background-color: #404a53;
   color: #ff6b6b;
+
   cursor: pointer;
 }
 

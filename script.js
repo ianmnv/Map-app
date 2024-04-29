@@ -60,6 +60,7 @@ class Cycling extends Workout {
 }
 
 const form = document.querySelector('.form');
+const workoutContainer = document.querySelector('.workout_container');
 const containerWorkouts = document.querySelector('.workouts');
 const inputType = document.querySelector('.form__input--type');
 const inputDistance = document.querySelector('.form__input--distance');
@@ -76,6 +77,7 @@ class App {
   #mapEvent;
   #workouts = [];
   dontChange = false;
+  sorted = false;
 
   constructor() {
     // Get position
@@ -275,7 +277,7 @@ class App {
       </li> 
       `;
 
-    form.insertAdjacentHTML('afterend', html);
+    workoutContainer.insertAdjacentHTML('afterbegin', html);
   }
 
   _renderWorkoutMarker(workout) {
@@ -479,13 +481,14 @@ class App {
     const options = [
       { text: 'date', value: 'date' },
       { text: 'type', value: 'type' },
-      { text: 'duration', value: 'duration' },
-      { text: 'distance', value: 'distance' },
-      { text: 'cadence', value: 'cadence' },
-      { text: 'pace', value: 'pace' },
-      { text: 'elevation', value: 'elevation' },
-      { text: 'speed', value: 'speed' },
+      { text: 'duration ⏱', value: 'duration' },
+      { text: 'distance: 🏃‍♂️ or 🚴‍♀️', value: 'distance' },
+      { text: 'cadence 🦶🏼', value: 'cadence' },
+      { text: 'pace ⚡️', value: 'pace' },
+      { text: 'elevation ⛰', value: 'elevation' },
+      { text: 'speed ⚡️', value: 'speed' },
     ];
+    // dur ⏱, dist '🏃‍♂️' : '🚴‍♀️', pace or speed ⚡️, cade 🦶🏼, elev ⛰
 
     options.forEach(opt => {
       const option = document.createElement('option');
@@ -494,21 +497,52 @@ class App {
 
       sortBtn.append(option);
     });
-    const sortSelect = document.querySelector('.sort_select');
 
     // Show all workouts on the map
     const showAll = document.createElement('button');
     showAll.classList.add('show_btn');
     showAll.textContent = 'Show all Workouts';
-    const showBtn = document.querySelector('.show_btn');
 
     btnContainer.append(span, sortBtn, showAll);
     imgEl.after(btnContainer);
 
     // Event handlers
-    btnContainer.addEventListener('click', function (e) {
-      console.log(e.target);
-    });
+    btnContainer.addEventListener('click', this._sortOrShowAll.bind(this));
+  }
+
+  _sortOrShowAll(e) {
+    if (e.target.classList.contains('show_btn')) {
+    }
+
+    if (e.target.classList.contains('sort_select')) {
+      const selectedOpt = e.target.value;
+
+      switch (selectedOpt) {
+        case 'date':
+          console.log('date');
+          break;
+        case 'type':
+          console.log('1');
+          break;
+        case 'duration':
+          break;
+        case 'distance':
+          console.log('3');
+          break;
+        case 'cadence':
+          console.log('date');
+          break;
+        case 'pace':
+          console.log('date');
+          break;
+        case 'speed':
+          console.log('date');
+          break;
+        case 'elevation':
+          console.log('date');
+          break;
+      }
+    }
   }
 }
 
