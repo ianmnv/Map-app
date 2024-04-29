@@ -525,6 +525,40 @@ class App {
           console.log('1');
           break;
         case 'duration':
+          const mapTypes = new Map([]);
+          this.#workouts.forEach(work => {
+            mapTypes.set(work.id, work.duration);
+          });
+
+          const arrMapTypes = Array.from(mapTypes.entries());
+          const copyTypes = Array.from(mapTypes.entries());
+
+          workoutContainer.innerHTML = '';
+
+          // Sorted is false at the beginning
+          if (!this.sorted) {
+            copyTypes.sort((entry1, entry2) => {
+              // Compare values (entry[1])
+              if (entry1[1] < entry2[1]) return -1;
+              if (entry1[1] > entry2[1]) return 1;
+              return 0;
+            });
+
+            copyTypes.forEach(([key, value]) => {
+              const workout = this.#workouts.find(
+                work => work.id === key && work.duration === value
+              );
+              this._renderWorkout(workout);
+            });
+          } else {
+            arrMapTypes.forEach(([key, value]) => {
+              const workout = this.#workouts.find(
+                work => work.id === key && work.duration === value
+              );
+              this._renderWorkout(workout);
+            });
+          }
+          this.sorted = !this.sorted;
           break;
         case 'distance':
           console.log('3');
