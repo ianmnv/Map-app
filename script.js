@@ -481,18 +481,15 @@ class App {
 
     const sortBtn = document.createElement('select');
     sortBtn.classList.add('form__input', 'sort_select');
-    // Sort by date, type, duration, distance; running: cadence, pace; cycling: elevation or speed
+    // Sort by duration, distance; running: cadence, pace; cycling: elevation or speed
     const options = [
-      { text: 'date', value: 'date' },
-      { text: 'type', value: 'type' },
       { text: 'duration ⏱', value: 'duration' },
       { text: 'distance: 🏃‍♂️ or 🚴‍♀️', value: 'distance' },
-      { text: 'cadence 🦶🏼', value: 'cadence' },
-      { text: 'pace ⚡️', value: 'pace' },
-      { text: 'elevation ⛰', value: 'elevation' },
-      { text: 'speed ⚡️', value: 'speed' },
+      { text: '🏃‍♂️ cadence 🦶🏼', value: 'cadence' },
+      { text: '🏃‍♂️ pace ⚡️', value: 'pace' },
+      { text: '🚴‍♀️ elevation ⛰', value: 'elevation' },
+      { text: '🚴‍♀️ speed ⚡️', value: 'speed' },
     ];
-    // dur ⏱, dist '🏃‍♂️' : '🚴‍♀️', pace or speed ⚡️, cade 🦶🏼, elev ⛰
 
     options.forEach(opt => {
       const option = document.createElement('option');
@@ -521,66 +518,67 @@ class App {
     // Sorting workouts
     if (e.target.classList.contains('sort_select')) {
       const selectedOpt = e.target.value;
-
       switch (selectedOpt) {
-        case 'date':
-          console.log('date');
-          break;
-        case 'type':
-          console.log('1');
-          break;
         case 'duration':
-          const mapTypes = new Map([]);
-          this.#workouts.forEach(work => {
-            mapTypes.set(work.id, work.duration);
-          });
-
-          const arrMapTypes = Array.from(mapTypes.entries());
-          const copyTypes = Array.from(mapTypes.entries());
-
-          workoutContainer.innerHTML = '';
-
-          // Sorted is false at the beginning
-          if (!this.sorted) {
-            copyTypes.sort((entry1, entry2) => {
-              // Compare values (entry[1])
-              if (entry1[1] < entry2[1]) return -1;
-              if (entry1[1] > entry2[1]) return 1;
-              return 0;
-            });
-
-            copyTypes.forEach(([key, value]) => {
-              const workout = this.#workouts.find(
-                work => work.id === key && work.duration === value
-              );
-              this._renderWorkout(workout);
-            });
-          } else {
-            arrMapTypes.forEach(([key, value]) => {
-              const workout = this.#workouts.find(
-                work => work.id === key && work.duration === value
-              );
-              this._renderWorkout(workout);
-            });
-          }
+          this._sortWorkouts(undefined, undefined, 'duration');
           this.sorted = !this.sorted;
           break;
         case 'distance':
-          console.log('3');
+          this._sortWorkouts(undefined, undefined, 'distance');
+          this.sorted = !this.sorted;
           break;
+        // Running: cadence & pace
         case 'cadence':
-          console.log('date');
+          this._sortWorkouts(undefined, undefined, 'cadence');
+          this.sorted = !this.sorted;
           break;
         case 'pace':
-          console.log('date');
+          this._sortWorkouts(undefined, undefined, 'pace');
+          this.sorted = !this.sorted;
           break;
+        // Cycling: speed & elevation
         case 'speed':
-          console.log('date');
+          this._sortWorkouts(undefined, undefined, 'speed');
+          this.sorted = !this.sorted;
           break;
         case 'elevation':
-          console.log('date');
+          this._sortWorkouts(undefined, undefined, 'elevationGain');
+          this.sorted = !this.sorted;
           break;
       }
+    }
+  }
+
+  _sortWorkouts(work = this.#workouts, sorted = this.sorted, workType) {
+    const mapTypes = new Map([]);
+    work.forEach(work => {
+      if (!work[workType]) return;
+      mapTypes.set(work.id, work[workType]);
+    });
+
+    const arrMapTypes = Array.from(mapTypes.entries());
+    const copyTypes = Array.from(mapTypes.entries());
+
+    workoutContainer.innerHTML = '';
+
+    // Sorted is false at the beginning
+    if (!sorted) {
+      copyTypes.sort((a, b) => a[1] - b[1]);
+
+      copyTypes.forEach(([key, value]) => {
+        if (!value) return;
+        const workout = work.find(
+          work => work.id === key && work[workType] === value
+        );
+        this._renderWorkout(workout);
+      });
+    } else {
+      arrMapTypes.forEach(([key, value]) => {
+        const workout = work.find(
+          work => work.id === key && work[workType] === value
+        );
+        this._renderWorkout(workout);
+      });
     }
   }
 }
