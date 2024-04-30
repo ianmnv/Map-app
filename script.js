@@ -512,7 +512,28 @@ class App {
   }
 
   _sortOrShowAll(e) {
+    // Show all workouts in the map
     if (e.target.classList.contains('show_btn')) {
+      const lats = [];
+      const lngs = [];
+      this.#workouts.forEach(work => {
+        lats.push(work.coords[0]);
+        lngs.push(work.coords[1]);
+      });
+
+      const maxLat = Math.max(...lats);
+      const minLat = Math.min(...lats);
+
+      const maxLng = Math.max(...lngs);
+      const minLng = Math.min(...lngs);
+
+      this.#map.fitBounds(
+        [
+          [maxLat, maxLng],
+          [minLat, minLng],
+        ],
+        { padding: [100, 100] }
+      );
     }
 
     // Sorting workouts
